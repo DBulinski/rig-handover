@@ -32,5 +32,12 @@ export function createApp(config: RigConfig = loadConfig()) {
     );
   });
 
+  app.get('/api/digest/:night', (c) => {
+    const night = c.req.param('night');
+    const digest = isNight(night) ? readNight(config.runsDir, night) : null;
+    if (!digest) return c.json({ error: 'no such night' }, 404);
+    return c.json({ night, rows: sortByJob(digest.rows), badLines: digest.badLines });
+  });
+
   return app;
 }
